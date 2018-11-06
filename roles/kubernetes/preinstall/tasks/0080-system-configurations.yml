@@ -45,6 +45,11 @@
   tags:
     - bootstrap-os
 
+- name: Make sure ip forwarding destination folder exists
+  file:
+    name: "{{ sysctl_file_path | dirname }}"
+    state: directory
+
 - name: Enable ip forwarding
   sysctl:
     sysctl_file: "{{sysctl_file_path}}"
