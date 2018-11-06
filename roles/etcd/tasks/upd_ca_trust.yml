@@ -16,6 +16,11 @@
   tags:
     - facts
 
+- name: Create directory incase it doesn't exist
+  file:
+    path: "{{ ca_cert_path | dirname }}"
+    state: directory
+
 - name: Gen_certs | add CA to trusted CA dir
   copy:
     src: "{{ etcd_cert_dir }}/ca.pem"
