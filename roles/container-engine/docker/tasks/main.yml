@@ -46,6 +46,7 @@
           {{ docker_kernel_min_version }} on
           {{ ansible_distribution }}-{{ ansible_distribution_version }}
   when: (not ansible_os_family in ["CoreOS", "Container Linux by CoreOS"]) and (ansible_kernel is version(docker_kernel_min_version, "<"))
+  when: not ansible_distribution in ["Clear Linux OS"]
   tags:
     - facts
 
@@ -63,6 +64,7 @@
   delay: "{{ retry_stagger | d(3) }}"
   with_items: "{{ docker_repo_key_info.repo_keys }}"
   when: not (ansible_os_family in ["CoreOS", "Container Linux by CoreOS", "RedHat", "Suse"] or is_atomic)
+  when: not ansible_distribution in ["Clear Linux OS"]
 
 - name: ensure docker-ce repository is enabled
   action: "{{ docker_repo_info.pkg_repo }}"
@@ -71,6 +73,7 @@
     state: present
   with_items: "{{ docker_repo_info.repos }}"
   when: not (ansible_os_family in ["CoreOS", "Container Linux by CoreOS", "RedHat", "Suse"] or is_atomic) and (docker_repo_info.repos|length > 0)
+  when: not ansible_distribution in ["Clear Linux OS"]
 
 - name: ensure docker-engine repository public key is installed
   action: "{{ dockerproject_repo_key_info.pkg_key }}"
@@ -86,6 +89,7 @@
   when:
     - not (ansible_os_family in ["CoreOS", "Container Linux by CoreOS", "RedHat", "Suse"] or is_atomic)
     - use_docker_engine is defined and use_docker_engine
+    - not ansible_distribution in ["Clear Linux OS"]
 
 - name: ensure docker-engine repository is enabled
   action: "{{ dockerproject_repo_info.pkg_repo }}"
@@ -96,6 +100,7 @@
   when:
     - use_docker_engine is defined and use_docker_engine
     - not (ansible_os_family in ["CoreOS", "Container Linux by CoreOS", "RedHat", "Suse"] or is_atomic) and (dockerproject_repo_info.repos|length > 0)
+    - not ansible_distribution in ["Clear Linux OS"]
 
 - name: Configure docker repository on Fedora
   template:
@@ -140,7 +145,13 @@
   with_items: "{{ docker_package_info.pkgs }}"
   notify: restart docker
   when: not (ansible_os_family in ["CoreOS", "Container Linux by CoreOS"] or is_atomic) and (docker_package_info.pkgs|length > 0)
+  when: not ansible_distribution in ["Clear Linux OS"]
   ignore_errors: true
+
+- name: ensure docker packages are installed
+  swupd:
+    name: containers-basic
+    state: present
 
 - name: get available packages on Ubuntu
   command: apt-cache policy docker-ce
@@ -164,6 +175,7 @@
     owner: "root"
     mode: 0644
   when: not (ansible_os_family in ["CoreOS", "Container Linux by CoreOS", "RedHat", "Suse"] or is_atomic)
+  when: not ansible_distribution in ["Clear Linux OS"]
 
 - name: ensure service is started if docker packages are already present
   service:
