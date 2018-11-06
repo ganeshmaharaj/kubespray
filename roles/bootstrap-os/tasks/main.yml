@@ -20,6 +20,8 @@
       centos
       {%- elif 'OpenSUSE' in os_release.stdout -%}
       opensuse
+      {%- elif 'ClearLinux' in os_release.stdout -%}
+      clear
       {%- endif -%}
 
 - include_tasks: bootstrap-ubuntu.yml
@@ -40,6 +42,9 @@
 - include_tasks: bootstrap-opensuse.yml
   when: os_family == "opensuse"
 
+- include_tasks: bootstrap-clear.yml
+  when: os_family == "clear"
+
 - import_tasks: setup-pipelining.yml
 
 - name: Create remote_tmp for it is used by another module
@@ -53,19 +58,23 @@
     gather_subset: '!all'
     filter: ansible_*
 
+- name: Debug distro
+  debug:
+    msg: "{{ hostvars }}"
+
 - name: Assign inventory name to unconfigured hostnames (non-CoreOS and Tumbleweed)
   hostname:
     name: "{{inventory_hostname}}"
   when:
     - override_system_hostname
-    - ansible_os_family not in ['Suse', 'CoreOS', 'Container Linux by CoreOS']
+    - ansible_os_family not in ['Suse', 'CoreOS', 'Container Linux by CoreOS', 'ClearLinux']
 
 - name: Assign inventory name to unconfigured hostnames (CoreOS and Tumbleweed only)
   command: "hostnamectl set-hostname  {{inventory_hostname}}"
   register: hostname_changed
   when:
     - override_system_hostname
-    - ansible_os_family in ['Suse', 'CoreOS', 'Container Linux by CoreOS']
+    - ansible_os_family in ['Suse', 'CoreOS', 'Container Linux by CoreOS', 'ClearLinux']
 
 - name: Update hostname fact (CoreOS and Tumbleweed only)
   setup:

@@ -83,6 +83,11 @@
   failed_when: modinfo_br_netfilter.rc not in [0, 1]
   changed_when: false
 
+- name: Verify br_netfilter module path exists
+  file:
+    path: /etc/modules-load.d
+    state: directory
+
 - name: Enable br_netfilter module
   modprobe:
     name: br_netfilter
@@ -124,7 +129,7 @@
     - ip_vs_rr
     - ip_vs_wrr
     - ip_vs_sh
-    - nf_conntrack_ipv4
+    - nf_conntrack
   when: kube_proxy_mode == 'ipvs'
   tags:
     - kube-proxy
