@@ -1,0 +1,9 @@
+---
+- name: Install basic packages to run containers
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items: [containers-basic]
+
+- name: Make sure docker is running
+  shell: 'systemctl enable docker && systemctl start docker'

@@ -69,7 +69,11 @@ runtime = "/usr/bin/runc"
 # runtime_untrusted_workload is the OCI compatible runtime used for untrusted
 # container workloads. This is an optional setting, except if
 # default_container_trust is set to "untrusted".
+{% if ansible_distribution == "Clear Linux OS" -%}
+runtime_untrusted_workload = "/usr/bin/kata-runtime"
+{% else %}
 runtime_untrusted_workload = ""
+{% endif %}
 
 # default_workload_trust is the default level of trust crio puts in container
 # workloads. It can either be "trusted" or "untrusted", and the default
@@ -107,7 +111,11 @@ selinux = {{ (preinstall_selinux_state == 'enforcing')|lower }}
 
 # seccomp_profile is the seccomp json profile path which is used as the
 # default for the runtime.
+{% if ansible_distribution == "Clear Linux OS" -%}
+seccomp_profile = "/usr/share/defaults/crio/seccomp.json"
+{% else %}
 seccomp_profile = "/etc/crio/seccomp.json"
+{% endif %}
 
 # apparmor_profile is the apparmor profile name which is used as the
 # default for the runtime.
@@ -199,7 +207,11 @@ pause_command = "/pause"
 # use when deciding whether or not to trust an image that we've pulled.
 # Outside of testing situations, it is strongly advised that this be left
 # unspecified so that the default system-wide policy will be used.
+{% if ansible_distribution == "Clear Linux OS" -%}
+signature_policy = "/usr/share/defaults/crio/policy.json"
+{% else %}
 signature_policy = ""
+{% endif %}
 
 # image_volumes controls how image volumes are handled.
 # The valid values are mkdir and ignore.
@@ -231,4 +243,8 @@ registries = [
 network_dir = "/etc/cni/net.d/"
 
 # plugin_dir is where CNI plugin binaries are stored.
+{% if ansible_distribution == "Clear Linux OS" -%}
+plugin_dir = "/usr/libexec/cni/"
+{% else %}
 plugin_dir = "/opt/cni/bin/"
+{% endif %}
