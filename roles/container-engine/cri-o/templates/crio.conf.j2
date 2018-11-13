@@ -153,6 +153,12 @@ hooks_dir_path = "/usr/share/containers/oci/hooks.d"
 default_mounts = [
 ]
 
+# Set default ulimits higher than 4K to allow containers like elastic search to
+# not crash.
+default_ulimits = [
+     "nofile=65536:65536"
+]
+
 # CRI-O reads its default mounts from the following two files:
 # 1) /etc/containers/mounts.conf - this is the override file, where users can
 # either add in their own default mounts, or override the default mounts shipped
@@ -243,8 +249,4 @@ registries = [
 network_dir = "/etc/cni/net.d/"
 
 # plugin_dir is where CNI plugin binaries are stored.
-{% if ansible_distribution == "Clear Linux OS" -%}
-plugin_dir = "/usr/libexec/cni/"
-{% else %}
 plugin_dir = "/opt/cni/bin/"
-{% endif %}
