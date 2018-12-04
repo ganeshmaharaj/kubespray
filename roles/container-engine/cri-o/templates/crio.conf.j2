@@ -69,7 +69,7 @@ runtime = "/usr/bin/runc"
 # runtime_untrusted_workload is the OCI compatible runtime used for untrusted
 # container workloads. This is an optional setting, except if
 # default_container_trust is set to "untrusted".
-{% if ansible_distribution == "Clear Linux OS" -%}
+{% if ansible_distribution == "ClearLinux" -%}
 runtime_untrusted_workload = "/usr/bin/kata-runtime"
 {% else %}
 runtime_untrusted_workload = ""
@@ -111,7 +111,7 @@ selinux = {{ (preinstall_selinux_state == 'enforcing')|lower }}
 
 # seccomp_profile is the seccomp json profile path which is used as the
 # default for the runtime.
-{% if ansible_distribution == "Clear Linux OS" -%}
+{% if ansible_distribution == "ClearLinux" -%}
 seccomp_profile = "/usr/share/defaults/crio/seccomp.json"
 {% else %}
 seccomp_profile = "/etc/crio/seccomp.json"
@@ -213,7 +213,7 @@ pause_command = "/pause"
 # use when deciding whether or not to trust an image that we've pulled.
 # Outside of testing situations, it is strongly advised that this be left
 # unspecified so that the default system-wide policy will be used.
-{% if ansible_distribution == "Clear Linux OS" -%}
+{% if ansible_distribution == "ClearLinux" -%}
 signature_policy = "/usr/share/defaults/crio/policy.json"
 {% else %}
 signature_policy = ""

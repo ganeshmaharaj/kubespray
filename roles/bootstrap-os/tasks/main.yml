@@ -20,7 +20,7 @@
       centos
       {% elif 'OpenSUSE' in os_release.stdout -%}
       opensuse
-      {% elif 'Clear Linux OS' in os_release.stdout -%}
+      {% elif 'ClearLinux' in os_release.stdout -%}
       clear
       {%- endif -%}
 
@@ -60,7 +60,7 @@
 
 - name: Debug distro
   debug:
-    msg: "{{ hostvars | to_nice_json }}"
+    msg: "{{ hostvars }}"
 
 - name: Assign inventory name to unconfigured hostnames (non-CoreOS and Tumbleweed)
   hostname:
@@ -68,7 +68,7 @@
   when:
     - override_system_hostname
     - ansible_os_family not in ['Suse', 'CoreOS', 'Container Linux by CoreOS']
-    - ansible_distribution not in ['Clear Linux OS']
+    - ansible_distribution not in ['ClearLinux']
 
 - name: Assign inventory name to unconfigured hostnames (CoreOS and Tumbleweed only)
   command: "hostnamectl set-hostname  {{inventory_hostname}}"
