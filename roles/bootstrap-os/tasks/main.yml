@@ -58,6 +58,10 @@
     gather_subset: '!all'
     filter: ansible_*
 
+- name: Debug distro
+  debug:
+    msg: "{{ hostvars }}"
+
 - name: Assign inventory name to unconfigured hostnames (non-CoreOS and Tumbleweed)
   hostname:
     name: "{{inventory_hostname}}"

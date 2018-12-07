@@ -59,6 +59,19 @@ file_locking = true
 # The "crio.runtime" table contains settings pertaining to the OCI
 # runtime used and options for how to set up and manage the OCI runtime.
 [crio.runtime]
+{% if ansible_distribution == "ClearLinux" %}
+manage_network_ns_lifecycle = true
+{% endif %}
+
+{% if ansible_distribution == "ClearLinux" %}
+# A list of ulimits to be set in containers by default, specified as
+# # "<ulimit name>=<soft limit>:<hard limit>", for example:
+# # "nofile=1024:2048"
+# # If nothing is set here, settings will be inherited from the CRI-O daemon
+default_ulimits = [
+        "nofile=65536:65536"
+]
+{% endif %}
 
 # runtime is the OCI compatible runtime used for trusted container workloads.
 # This is a mandatory setting as this runtime will be the default one
@@ -240,3 +253,8 @@ network_dir = "/etc/cni/net.d/"
 
 # plugin_dir is where CNI plugin binaries are stored.
 plugin_dir = "/opt/cni/bin/"
+{% if ansible_distribution == "ClearLinux" %}
+
+[crio.runtime.runtimes.kata]
+runtime_path = "/usr/bin/kata-runtime"
+{% endif %}
